@@ -5,7 +5,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-
+  //"io"
+  "fmt"
+  //"strings"
+  "encoding/json"
 	"github.com/gorilla/websocket"
   // Required for pocketbase
   "github.com/labstack/echo/v5"
@@ -15,8 +18,18 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 )
 
+type Player struct {
+  Id int32 `json:"id"`
+  Name string;
+  X int32;
+  Y int32;
+  active bool;
+}
+
 
 var upgrader = websocket.Upgrader{} // use default options
+var Players [1024]Player;
+var id_count int32 = 0;
 
 func main() {
 	log.Print("Server starting up")
@@ -49,11 +62,11 @@ func checkOrigin(req *http.Request) bool {
 // TODO(Ali): I need to implement broadcast of a limited amount of coordinates to a player when they login
 // First i'll try to make it work and then add on fnality ;)
 // At this point I just send back and forth a message between my client and server and we establish a correct
+
 // Websocket connection 
 func initWebsocket(ctx echo.Context) error {
   c, err := upgrader.Upgrade(ctx.Response().Unwrap(), ctx.Request(), nil)
-
-  print("Hello World")
+  
   
 	if err != nil {
 		log.Print("upgrade:", err)
@@ -63,19 +76,42 @@ func initWebsocket(ctx echo.Context) error {
 	defer c.Close()
 
 	for {
-		mt, message, err := c.ReadMessage()
+	  var receivedData Player
+
+		_, message, err := c.ReadMessage()
+
 		if err != nil {
 			log.Println("read:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			log.Println("write:", err)
-			break
+
+    // Unmarshal JSON
+		if err := json.Unmarshal(message, &receivedData); err != nil {
+			log.Println("Error unmarshalling JSON:", err)
 		}
 
+    // Every successful connection let's create a player
+    Players[id_count] = Player {
+      Id: id_count,
+      Name: receivedData.Name, 
+      X: receivedData.X, 
+      Y: receivedData.Y,
+      active: receivedData.active,
+    }
+    
+    // Send all the players to the client initially
+    json_out, _ := json.Marshal(&Players)
+    c.WriteMessage(1, json_out)
+
+    // Access the JSON data
+    fmt.Printf("Received content: %d\n", receivedData.Id)
+    fmt.Printf("Received content: %s\n", receivedData.Name)
+    fmt.Printf("Received content: %d\n", receivedData.X)
+    fmt.Printf("Received content: %d\n", receivedData.Y)
 	}
+
+  id_count++;
+
 
   return nil
 }
