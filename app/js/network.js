@@ -1,13 +1,24 @@
-const URL = "ws://localhost:8090/websocket";
+import { WEBSOCKET, Player, Game, GAME_STATE_DISPATCH_MAP } from "./constants.js"
+import { register_player } from './message_bus.js'
 
-// Create a web socket - Async btw
-socket = new WebSocket(URL);
+export const init_websocket = () => {
+  WEBSOCKET.websocket = new WebSocket(WEBSOCKET.url);
 
-// When the socket is open, we then send the message
-socket.onopen = ($event) => { socket.send("Test message to for server"); }
+  WEBSOCKET.websocket.onopen = ($event) => { 
+    // Send information about us to the server
+    WEBSOCKET.websocket.send(JSON.stringify(Player));
+    register_player();
+  }
 
-// Recieve messages
-socket.onmessage = ($event) => { console.log($event.data); };
+  WEBSOCKET.websocket.onmessage = ($event) => { 
+    GAME_STATE_DISPATCH_MAP[Game.GAME_STATE]($event.data);
+  };
+
+  WEBSOCKET.websocket.onclose = ($event) => { 
+    Player.active = false;
+  };
+}
+
 
 
 
