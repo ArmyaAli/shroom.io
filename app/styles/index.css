@@ -11,8 +11,9 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 header {
-  font-weight: 200;
+  font-size: 32px;
 }
 
 canvas {
