@@ -1,4 +1,4 @@
-import { WEBSOCKET, Player, MOVE_SPEED } from "./constants.js"
+import { Websocket, Player, MOVE_SPEED } from "./constants.js"
 
 window.addEventListener("keydown", (event) => {
   if (event.code === "ArrowDown"){
@@ -11,9 +11,9 @@ window.addEventListener("keydown", (event) => {
     Player.x += MOVE_SPEED;
   }
 
-  if(WEBSOCKET.readyState === 1) { 
+  if(Websocket.websocket.readyState === 1) { 
   console.log("Pressed");
-    WEBSOCKET.send(JSON.stringify(Player)); 
+    Websocket.websocket.send(JSON.stringify(Player)); 
   }
 
 });

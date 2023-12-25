@@ -1,8 +1,7 @@
-import { Player, PLAYER_SIZE, WEBSOCKET, PLAYERS_IN_VIEW } from "./constants.js"
+import { Player, PLAYER_SIZE, Websocket, PLAYERS_IN_VIEW, Canvas as canvas } from "./constants.js"
 import { init_websocket} from "./network.js"
 import { update_player_positions } from "./message_bus.js"
 
-const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
 
@@ -24,8 +23,9 @@ const draw_existing_players = () => {
   for(let i = 0; i < 4; ++i) {
     // if player is active
     const player = PLAYERS_IN_VIEW[i];
-    if(PLAYERS_IN_VIEW[i] != null) 
+    if(player != null && player.active === true) {
       draw_player(player.x, player.y, player.name);
+    }
   }
 }
 

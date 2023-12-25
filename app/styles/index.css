@@ -1,19 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
 }
 
+html {
+  height: 100%;
+}
 body {
   display: flex;
   height: 100%;
   width: 100%;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
 header {
   font-size: 32px;
+  text-align: center;
+  color: white;
+  height: 64px;
+  width: 100%;
+  background-color: green;
 }
 
 canvas {

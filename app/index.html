@@ -7,21 +7,36 @@
     
     <title>Shroom.io</title>
 
-    <link rel="stylesheet" href="styles/index.css">
+    <link href="styles/output.css" rel="stylesheet">
+    <script src="js/pocketbase_sdk/dist/pocketbase.umd.js"></script>
     <script defer type="module" src="js/network.js"></script>
     <script defer type="module" src="js/main.js"></script>
     <script defer type="module" src="js/listeners.js"></script>
+    <script defer type="module" src="js/auth.js"></script>
+    <script defer type="module" src="js/uicontrols.js"></script>
+    
+    
 </head>
 
 <body>
     <!-- Header -->
     <header>
-       shroom.io 
+       Shroom.io 
     </header>
 
-    <canvas height=400 width=800>
+    <div id="__login" class="flex flex-col">
+        <p class="my-2 text-md font-bold">Choose a Nickname</p>
+        <input class="my-2 px-4 py-2 border-4 focus:outline-none rounded-md" id="__nick" type="text" />
+        <span class="text-sm text-red-500" id="__validateNickname" type="text"></span>
+        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"> Choose!</button>
+    </div>
 
-    </canvas>
+    <div class="flex flex-col" id="__game-view-text">
+    </div>
+    <div id="__game-view" style="display: none">
+        <canvas height=400 width=800></canvas>
+        <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
+    </div>
 
     <!-- Footer -->
     <footer>

@@ -1,24 +1,23 @@
-import { WEBSOCKET, Player, Game, GAME_STATE_DISPATCH_MAP } from "./constants.js"
+import { Websocket, Player, Game, GAME_STATE_DISPATCH_MAP } from "./constants.js"
 import { register_player } from './message_bus.js'
 
 export const init_websocket = () => {
-  WEBSOCKET.websocket = new WebSocket(WEBSOCKET.url);
+  Websocket.websocket = new WebSocket(Websocket.url);
 
-  WEBSOCKET.websocket.onopen = ($event) => { 
-    // Send information about us to the server
-    WEBSOCKET.websocket.send(JSON.stringify(Player));
+  Websocket.websocket.onopen = ($event) => { 
     register_player();
   }
 
-  WEBSOCKET.websocket.onmessage = ($event) => { 
-    GAME_STATE_DISPATCH_MAP[Game.GAME_STATE]($event.data);
-  };
+  Websocket.websocket.onmessage = socketRouter;
 
-  WEBSOCKET.websocket.onclose = ($event) => { 
+  Websocket.websocket.onclose = ($event) => { 
     Player.active = false;
   };
 }
 
 
-
+const socketRouter = ($data) => {
+  console.log("Router Channeler")
+  console.log($data.channel)
+}
 
