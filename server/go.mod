@@ -1,4 +1,4 @@
-module myapp
+module game_server
 
 go 1.21.4
 
