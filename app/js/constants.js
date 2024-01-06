@@ -1,4 +1,4 @@
-import { set_handshake_data, update_player_positions } from './message_bus.js'
+import { set_handshake_data, update_player_positions } from './bus.js'
 
 export const Websocket = {
   websocket: null,
@@ -11,11 +11,26 @@ export const Pocketbase = new PocketBase('http://localhost:8090');
 export const Player = {
   id: "",
   name: "Ali Umar",
+  vel: { x: 0, y: 0 },
   pos: { x: 0, y: 0 },
   timestamp: null 
-}
+};
 
-export const PLAYERS_IN_VIEW = [];
+export const FPS_LIMIT = 60;
+export const FPS_INTERVAL = 1000 / FPS_LIMIT;
+
+export const FPS = {
+  acc: -1,
+  now: -1,
+  then: performance.now(),
+  dt: -1
+};
+
+
+// View Id
+// Player Count
+// Player[]
+export const VIEW_BUFFER = []
 
 export const PLAYER_SIZE = 25;
 
@@ -44,9 +59,9 @@ export const GAME_PLAYING       = 0b00000100;
 //export const GAME_PLAYING     = 0b00000100;
 
 // Manage communication pipe state
-export const NET_HANDSHAKE    = 0b00000001;
-export const NET_CONNECTED    = 0b00000010;
-export const NET_DISCONNECTED = 0b00000100;
+export const NET_HANDSHAKE    = 0x1;
+export const NET_CONNECTED    = 0x2;
+export const NET_DISCONNECTED = 0x3;
 
 export const GAME_STATE_DISPATCH_MAP = {
   1: set_handshake_data,
