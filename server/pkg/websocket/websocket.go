@@ -2,13 +2,12 @@ package websocket
 
 import (
 	"fmt"
-  "encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v5"
-	"io"
 	"log"
 	"net/http"
-	//"time"
+  "time"
+  "game_server/pkg/data"
 )
 
 var upgrader = websocket.Upgrader{} // use default options
@@ -32,35 +31,15 @@ func Upgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
 func Init_ws(ctx echo.Context) error {
 	c, err := Upgrade(ctx.Response().Unwrap(), ctx.Request())
 
+
 	if err != nil {
 		log.Print("upgrade:", err)
 		return nil
 	}
 
-	defer c.Close()
-
-  for {
-    mt, message, err := c.ReadMessage()
-    var receivedData Message
-
-    json.Unmarshal(message, &receivedData)
-        
-    if err != nil {
-      log.Println("read:", err)
-      break
-    }
-
-    log.Printf("recv: %s", receivedData.Channel)
-    log.Printf("recv: %s", receivedData.Player.Name)
-
-    err = c.WriteMessage(mt, message)
-
-    if err != nil {
-      log.Println("write:", err)
-      break
-    }
-  }
-
+  // Start ticker
+  TIMER_playerUpdate(c)
+  
   return nil
 }
 
@@ -72,7 +51,6 @@ func Reader(conn *websocket.Conn) {
 			return
 		}
 
-		fmt.Println(string(p))
 
 		if err := conn.WriteMessage(messageType, p); err != nil {
 			log.Println(err)
@@ -81,30 +59,52 @@ func Reader(conn *websocket.Conn) {
 	}
 }
 
-func Writer(conn *websocket.Conn) {
-	for {
+func writeMessage(message string, conn *websocket.Conn, kill chan bool) {
+
+    if conn == nil {
+      fmt.Print("Connection Lost")
+      return
+    }
+
 		fmt.Println("Sending")
 
-		messageType, r, err := conn.NextReader()
+    p := data.Player{
+      Id: "1111", 
+      Nick: "lordmushroom", 
+      Pos: data.Vector2{X: 33, Y: 100}, 
+      Vel: data.Vector2{X: 10, Y: 10},
+    }
+
+    err := conn.WriteJSON(p)        
+
 		if err != nil {
-			fmt.Println(err)
+      if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+        fmt.Println("Unexpected Close Error:", err)
+      }
+      fmt.Println("Error", err)
+      kill <-true
+      // End the timer
 			return
 		}
+}
 
-		w, err := conn.NextWriter(messageType)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
 
-		if _, err := io.Copy(w, r); err != nil {
-			fmt.Println(err)
-			return
-		}
+func TIMER_playerUpdate(conn *websocket.Conn) {
+	ticker := time.NewTicker(1 * time.Second)
+	done := make(chan bool)
 
-		if err := w.Close(); err != nil {
-			fmt.Println(err)
-			return
+	go func() {
+		for {
+			select {
+			case <-done:
+        ticker.Stop();
+        fmt.Print("Exiting routine")
+				return
+			case t := <-ticker.C:
+        // Sample array to send
+        fmt.Print(t)
+        writeMessage("Hello", conn, done)
+			}
 		}
-	}
+	}()
 }

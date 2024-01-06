@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 	// Pocketbase
 	"game_server/pkg/websocket"
 	"github.com/pocketbase/pocketbase"
@@ -28,29 +27,7 @@ func main() {
 		return nil
 	})
   
-
-	ticker := time.NewTicker(500 * time.Millisecond)
-	done := make(chan bool)
-
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case t := <-ticker.C:
-				fmt.Println("Tick at", t)
-			}
-		}
-	}()
-
-	time.Sleep(1600 * time.Millisecond)
-	//ticker.Stop()
-	done <- true
-	fmt.Println("Ticker stopped")
-
-  err := app.Start()
-  
-  if err != nil {
+  if err := app.Start(); err != nil {
     fmt.Print("Hello")
   }
 
