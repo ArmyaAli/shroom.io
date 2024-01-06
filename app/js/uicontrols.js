@@ -1,5 +1,5 @@
 import { validateLoginInput } from './validate.js'
-import { Pocketbase as pb, Canvas as canvas, Game } from './constants.js'
+import { Pocketbase as pb, Canvas as canvas, Game, Player } from './constants.js'
 
 const LoginGroup = document.querySelector("#__login")
 const LoginValidationLabel = document.querySelector("#__login > #__validateNickname")
@@ -40,12 +40,14 @@ LogoutButton.addEventListener("click", async ($event) => {
 export const UI_setLoggedInView = () => {
     LoginGroup.style.display = "none";
     GameViewGroup.style.display = "block";
+
     for (const key of Object.keys(pb.authStore.model)) {
       const p = document.createElement("p");
       p.innerHTML = `${key}: ${pb.authStore.model[key]}` 
       DisplayTextContainer.appendChild(p);
     }
-
+    
+    Player.name = pb.authStore.model.username;
 }
 
 export const UI_setLoggedOutView = () => {
