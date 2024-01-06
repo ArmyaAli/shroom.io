@@ -1,14 +1,12 @@
-import { Player, PLAYER_SIZE, Websocket, PLAYERS_IN_VIEW, Canvas as canvas } from "./constants.js"
+import { FPS_LIMIT, FPS_INTERVAL, VIEW_BUFFER, FPS, Player, PLAYER_SIZE, Websocket, Canvas as canvas } from "./constants.js"
 import { init_websocket} from "./network.js"
-import { update_player_positions } from "./message_bus.js"
+import { update_player_positions } from "./bus.js"
 
 const ctx = canvas.getContext("2d");
-
 
 const draw_player = (x, y, name) => {
   // Draw name
   ctx.font = "16px serif";
-  console.log("Hello", name, x, y)
   ctx.fillText(name, x - 16, y - 32);
   
   // Draw body
@@ -20,12 +18,8 @@ const draw_player = (x, y, name) => {
 }
 
 const draw_existing_players = () => {
-  for(let i = 0; i < 4; ++i) {
-    // if player is active
-    const player = PLAYERS_IN_VIEW[i];
-    if(player != null && player.active === true) {
-      draw_player(player.x, player.y, player.name);
-    }
+  for(let i = 0; i < VIEW_BUFFER.length; ++i) {
+    draw_player(VIEW_BUFFER[i].pos.x, VIEW_BUFFER[i].pos.y, "player 2");
   }
 }
 
@@ -39,6 +33,8 @@ const prep_player_drop = () => {
 
 const update = () => {
   update_player_positions();
+  Player.x += Player.vel.x * FPS.dt;
+  Player.y += Player.vel.y * FPS.dt;
 }
 
 const draw = () => {
@@ -46,15 +42,25 @@ const draw = () => {
   draw_existing_players();
   draw_player(Player.x, Player.y, Player.name);
 }
+
 const bootstrap_game = () => {
   init_websocket();
   prep_player_drop();
 }
 
+
 const game_loop = () => {
-  // Requests
-  draw();
+  FPS.now = performance.now();
+  FPS.dt = FPS.now - FPS.then;
+
+  if(FPS.dt > FPS_INTERVAL) {
+    FPS.then = FPS.now - (FPS.dt % FPS_INTERVAL)
+    update();
+    draw();
+  }
+
   requestAnimationFrame(game_loop);
+
 }
 
 const game = () => {
