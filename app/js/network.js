@@ -1,5 +1,5 @@
-import { Websocket, Player, Game, GAME_STATE_DISPATCH_MAP } from "./constants.js"
-import { register_player } from './message_bus.js'
+import { Websocket, Player, Game, GAME_STATE_DISPATCH_MAP, VIEW_BUFFER } from "./constants.js"
+import { register_player } from './bus.js'
 
 export const init_websocket = () => {
   Websocket.websocket = new WebSocket(Websocket.url);
@@ -16,8 +16,11 @@ export const init_websocket = () => {
 }
 
 
-const socketRouter = ($data) => {
-  console.log("Router Channeler")
-  console.log($data.channel)
+// Channel the data appropriatly
+const socketRouter = ($event) => {
+  const data = JSON.parse($event.data);
+  //
+  // Add our item on the View Queue
+  VIEW_BUFFER.push(data);
 }
 

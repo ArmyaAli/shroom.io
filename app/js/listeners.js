@@ -1,19 +1,25 @@
-import { Websocket, Player, MOVE_SPEED } from "./constants.js"
+import { Websocket, Player, MOVE_SPEED, FPS } from "./constants.js"
 
 window.addEventListener("keydown", (event) => {
   if (event.code === "ArrowDown"){
-    Player.y += MOVE_SPEED;
+    Player.vel.y = 0.1;
   } else if (event.code === "ArrowUp"){
-    Player.y -= MOVE_SPEED;
+    Player.vel.y = -0.1;
   } else if (event.code === "ArrowLeft"){
-    Player.x -= MOVE_SPEED;
+    Player.vel.x = -0.1;
   } else if (event.code === "ArrowRight"){
-    Player.x += MOVE_SPEED;
+    Player.vel.x = 0.1;
   }
+});
 
-  if(Websocket.websocket.readyState === 1) { 
-  console.log("Pressed");
-    Websocket.websocket.send(JSON.stringify(Player)); 
+window.addEventListener("keyup", (event) => {
+  if (event.code === "ArrowDown"){
+    Player.vel.y = 0;
+  } else if (event.code === "ArrowUp"){
+    Player.vel.y = 0;
+  } else if (event.code === "ArrowLeft"){
+    Player.vel.x = 0;
+  } else if (event.code === "ArrowRight"){
+    Player.vel.x = 0;
   }
-
 });
