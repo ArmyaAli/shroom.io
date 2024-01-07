@@ -13,11 +13,14 @@ export const set_handshake_data = (data) => {
 }
 
 export const register_player = () => {
-  const to_send = { Channel: "ch_player", Content: Player };
-  console.log(to_send);
+  const to_send = { channel: "player", sessionid: Player.id, timestamp: Date.now(),  payload: Player };
   Websocket.websocket.send(JSON.stringify(to_send))
 }
 
 export const update_player_positions = () => {
+  if(Websocket.websocket.readyState === 1) {
+    const to_send = { channel: "position", sessionid: Player.id, timestamp: Date.now(), payload: Player };
+    Websocket.websocket.send(JSON.stringify(to_send))
+  }
 }
 

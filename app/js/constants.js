@@ -13,7 +13,6 @@ export const Player = {
   name: "Ali Umar",
   vel: { x: 0, y: 0 },
   pos: { x: 0, y: 0 },
-  timestamp: null 
 };
 
 export const FPS_LIMIT = 60;
@@ -30,7 +29,7 @@ export const FPS = {
 // View Id
 // Player Count
 // Player[]
-export const VIEW_BUFFER = []
+export const VIEW_MAP = new Map();
 
 export const PLAYER_SIZE = 25;
 

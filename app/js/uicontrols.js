@@ -19,9 +19,7 @@ LoginButton.addEventListener("click", async ($event) => {
 
         if (pb.authStore.isValid) {
             UI_setLoggedInView();
-            console.log(pb.authStore.isValid);
-            console.log(pb.authStore.token);
-            console.log(pb.authStore.model.id);
+            Player.nick = nickname;
         } else {
             console.log("unable to login")
         }
@@ -47,7 +45,6 @@ export const UI_setLoggedInView = () => {
       DisplayTextContainer.appendChild(p);
     }
     
-    Player.name = pb.authStore.model.username;
 }
 
 export const UI_setLoggedOutView = () => {
