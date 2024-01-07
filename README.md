@@ -65,3 +65,7 @@ Pocketbase will be extended to be an authoratative game server over websocket pr
 6. To run the server
    
         make server
+
+
+## Realtime Multiplayer!
+![Progress picture of the multiplayer](design/progress/prog-2023-11-27-1835.png)
