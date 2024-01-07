@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
   "time"
+  "encoding/json"
   "game_server/pkg/data"
 )
 
@@ -31,66 +32,77 @@ func Upgrade(w http.ResponseWriter, r *http.Request) (*websocket.Conn, error) {
 func Init_ws(ctx echo.Context) error {
 	c, err := Upgrade(ctx.Response().Unwrap(), ctx.Request())
 
-
 	if err != nil {
 		log.Print("upgrade:", err)
 		return nil
 	}
 
+  // Start our message listener
+
+  // Start our Reader
+
+  Init_channels()
+
+  LISTNER_reader(c) 
   // Start ticker
   TIMER_playerUpdate(c)
-  
   return nil
 }
 
-func Reader(conn *websocket.Conn) {
-	for {
-		messageType, p, err := conn.ReadMessage()
+func LISTNER_reader(conn *websocket.Conn) {
+  go func() {
+    for {
+      err := Reader(conn)
+
+      if err != nil {
+        break
+      }
+    }
+  }()
+}
+
+func Reader(conn *websocket.Conn) error {
+    var message Message
+
+		_, p, err := conn.ReadMessage()
+
 		if err != nil {
 			log.Println(err)
-			return
+			return err
 		}
 
+    // Read the data into player
+    err = json.Unmarshal(p, &message)
 
-		if err := conn.WriteMessage(messageType, p); err != nil {
-			log.Println(err)
-			return
-		}
-	}
+    if err != nil {
+        fmt.Println("Error:", err)
+        return err
+    }
+    
+    DispatchMap[message.Channel](&message)
+
+    return nil
 }
 
 func writeMessage(message string, conn *websocket.Conn, kill chan bool) {
-
     if conn == nil {
       fmt.Print("Connection Lost")
       return
     }
 
-		fmt.Println("Sending")
-
-    p := data.Player{
-      Id: "1111", 
-      Nick: "lordmushroom", 
-      Pos: data.Vector2{X: 33, Y: 100}, 
-      Vel: data.Vector2{X: 10, Y: 10},
-    }
-
-    err := conn.WriteJSON(p)        
+    err := conn.WriteMessage(websocket.TextMessage, []byte(message))
 
 		if err != nil {
-      if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-        fmt.Println("Unexpected Close Error:", err)
-      }
       fmt.Println("Error", err)
+      // If connection closed evict the client from the map somehow
       kill <-true
-      // End the timer
 			return
 		}
 }
 
 
 func TIMER_playerUpdate(conn *websocket.Conn) {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(15 * time.Millisecond)
 	done := make(chan bool)
 
 	go func() {
@@ -98,12 +110,15 @@ func TIMER_playerUpdate(conn *websocket.Conn) {
 			select {
 			case <-done:
         ticker.Stop();
-        fmt.Print("Exiting routine")
+        fmt.Println("Exiting routine")
 				return
-			case t := <-ticker.C:
-        // Sample array to send
-        fmt.Print(t)
-        writeMessage("Hello", conn, done)
+			case _ = <-ticker.C:
+        json, err := json.Marshal(data.PLAYER_MAP)
+        if err != nil {
+          fmt.Println("Error converting to json")
+        }
+
+        writeMessage(string(json), conn, done)
 			}
 		}
 	}()
