@@ -1,3 +1,4 @@
 server/pb_data
 app/js/pocketbase_sdk
 output.css
+app/lib
