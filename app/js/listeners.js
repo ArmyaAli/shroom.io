@@ -1,25 +1,24 @@
-import { Websocket, Player, MOVE_SPEED, FPS } from "./constants.js"
+import { Websocket, KEYCODES, GAMEFLAGS, Mouse, Player, MOVE_SPEED, FPS, Canvas as canvas} from "./constants.js"
 
 window.addEventListener("keydown", (event) => {
-  if (event.code === "ArrowDown"){
-    Player.vel.y = 0.1;
-  } else if (event.code === "ArrowUp"){
-    Player.vel.y = -0.1;
-  } else if (event.code === "ArrowLeft"){
-    Player.vel.x = -0.1;
-  } else if (event.code === "ArrowRight"){
-    Player.vel.x = 0.1;
-  }
+  if (event.code === KEYCODES.W){ GAMEFLAGS.UPKEYDOWN = true } 
+  if (event.code === KEYCODES.A){ GAMEFLAGS.LEFTKEYDOWN = true } 
+  if (event.code === KEYCODES.S){ GAMEFLAGS.DOWNKEYDOWN = true }
+  if (event.code === KEYCODES.D){ GAMEFLAGS.RIGHTKEYDOWN = true }
 });
 
 window.addEventListener("keyup", (event) => {
-  if (event.code === "ArrowDown"){
-    Player.vel.y = 0;
-  } else if (event.code === "ArrowUp"){
-    Player.vel.y = 0;
-  } else if (event.code === "ArrowLeft"){
-    Player.vel.x = 0;
-  } else if (event.code === "ArrowRight"){
-    Player.vel.x = 0;
-  }
+  if (event.code === KEYCODES.W){ GAMEFLAGS.UPKEYDOWN = false } 
+  if (event.code === KEYCODES.A){ GAMEFLAGS.LEFTKEYDOWN = false } 
+  if (event.code === KEYCODES.S){ GAMEFLAGS.DOWNKEYDOWN = false }
+  if (event.code === KEYCODES.D){ GAMEFLAGS.RIGHTKEYDOWN = false }
+});
+
+canvas.addEventListener('mouseenter', (event) => { GAMEFLAGS.MOUSEONSCREEN = true });
+canvas.addEventListener('mouseleave', (event) => { GAMEFLAGS.MOUSEONSCREEN = false });
+
+canvas.addEventListener('mousemove', (event) => { 
+  console.log(event)
+  Mouse.pos.x = event.clientX;
+  Mouse.pos.y = event.clientY;
 });
