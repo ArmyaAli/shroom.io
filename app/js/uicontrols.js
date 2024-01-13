@@ -19,7 +19,11 @@ LoginButton.addEventListener("click", async ($event) => {
 
         if (pb.authStore.isValid) {
             UI_setLoggedInView();
-            Player.nick = nickname;
+            Player.email = pb.authStore.model.email
+            Player.id = crypto.randomUUID(); 
+            if(Player.nick === null || Player.nick === undefined || Player.nick === "") {
+              Player.nick = pb.authStore.model.username
+            }
         } else {
             console.log("unable to login")
         }
@@ -39,11 +43,11 @@ export const UI_setLoggedInView = () => {
     LoginGroup.style.display = "none";
     GameViewGroup.style.display = "block";
 
-    for (const key of Object.keys(pb.authStore.model)) {
-      const p = document.createElement("p");
-      p.innerHTML = `${key}: ${pb.authStore.model[key]}` 
-      DisplayTextContainer.appendChild(p);
-    }
+//    for (const key of Object.keys(pb.authStore.model)) {
+//      const span = document.createElement("span");
+//      span.innerHTML = `${key}: ${pb.authStore.model[key]}` 
+//      DisplayTextContainer.appendChild(span);
+//    }
     
 }
 
