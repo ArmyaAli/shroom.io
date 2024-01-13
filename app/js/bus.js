@@ -18,7 +18,7 @@ export const register_player = () => {
 }
 
 export const update_player_positions = () => {
-  if(Websocket.websocket.readyState === 1) {
+  if(Websocket?.websocket?.readyState === 1) {
     const to_send = { channel: "position", sessionid: Player.id, timestamp: Date.now(), payload: Player };
     Websocket.websocket.send(JSON.stringify(to_send))
   }

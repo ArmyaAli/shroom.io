@@ -11,8 +11,37 @@ export const Pocketbase = new PocketBase('http://localhost:8090');
 export const Player = {
   id: "",
   name: "Ali Umar",
+  email: "",
   vel: { x: 0, y: 0 },
   pos: { x: 0, y: 0 },
+  acc: { x: 0.2, y: 0.2 },
+  radius: 25
+};
+
+export const KEYCODES = {
+  W: "KeyW",
+  A: "KeyA",
+  S: "KeyS",
+  D: "KeyD",
+}
+
+export const Mouse = {
+  pos: { x: 0, y: 0}
+}
+
+export const PLAYERSHIELD = {
+  angle: 0,
+  radius: Player.radius,
+  color: "green",
+  pos: {x: Player.radius, y:0}
+};
+
+export const GAMEFLAGS = {
+  MOUSEONSCREEN: false,
+  LEFTKEYDOWN:   false,
+  RIGHTKEYDOWN:  false,
+  UPKEYDOWN:     false,
+  DOWNKEYDOWN:   false,
 };
 
 export const FPS_LIMIT = 60;
@@ -37,8 +66,8 @@ export const SESSION_ID = -1;
 
 export const Game = {
   GAME_MAP: new Array(800 * 5)
-                 .fill(0)
-                 .map(() => new Array(400 * 20).fill(0)),
+   .fill(0)
+   .map(() => new Array(400 * 20).fill(0)),
 
   GAME_STATE: 1, 
   NET_STATE: 1,
