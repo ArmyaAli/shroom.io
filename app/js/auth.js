@@ -18,6 +18,7 @@
 
 import { Game, Player, Pocketbase as pb } from './constants.js'
 import { UI_setLoggedInView } from './uicontrols.js';
+import { init_websocket } from './network.js';
 // This method initializes a one-off realtime subscription and will
 // open a popup window with the OAuth2 vendor page to authenticate.
 //
@@ -30,11 +31,28 @@ import { UI_setLoggedInView } from './uicontrols.js';
 // 
 
 // Check Auth
+const checkRegistrationCookie = () => {
+  const cookie = {} 
+  console.log(document.cookie)
+  return document.cookie;
+}
+
 (async () => {
   if(pb.authStore.isValid) {
     Game.IS_AUTH = true;
+    Player.id = crypto.randomUUID(); 
+    Player.email = pb.authStore.model.email
     UI_setLoggedInView();
+
+    checkRegistrationCookie()
+    if(Player.nick === null || Player.nick === undefined || Player.nick === "") {
+      Player.nick = pb.authStore.model.username
+    }
+
+    await init_websocket();
+    return
   }
 })()
+
 
 
