@@ -31,6 +31,7 @@ Pocketbase will be extended to be an authoratative game server over websocket pr
         ```
 
 2. You may have to add the above tools to your path (installers may take care of it for you, not sure)
+3. Download Bootstrap 5 and place the files in lib folder 
 3. Setup your directory structure as server/js/pocketbase_sdk/dist with the files in the pocketbase_sdk
 
    ```
